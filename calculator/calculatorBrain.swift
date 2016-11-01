@@ -22,6 +22,12 @@ class CalculatorBrain {
         accumulator = operand
     }
     
+    private func clearCalc() {
+        pending = nil
+        accumulator = 0
+        
+    }
+    
     private var operations: Dictionary<String,OperationType> = [
         "π" : OperationType.Constant(M_PI),  // M_PI
         "e" : OperationType.Constant(M_E),  // M_E
@@ -30,7 +36,7 @@ class CalculatorBrain {
         "+" : OperationType.BinaryOperation({ $0 + $1 }),
         "−" : OperationType.BinaryOperation({ $0 - $1 }),
         "√" : OperationType.UnaryOperation(sqrt),  // sqrt
-        "cos" : OperationType.UnaryOperation(cos),  // cos
+        "C" : OperationType.Clear,  // cos
         "±" : OperationType.UnaryOperation({ -$0 }),
         "=" : .Equals
     ]
@@ -40,6 +46,7 @@ class CalculatorBrain {
         case UnaryOperation((Double) -> Double)
         case BinaryOperation((Double, Double) -> Double)
         case Equals
+        case Clear
         
     }
     
@@ -62,8 +69,12 @@ class CalculatorBrain {
                 pending = PendingBinaryOp(binaryFunction: foo, firstOperand: accumulator)
             case .Equals:
                 execPendingBinary()
+            case .Clear:
+                clearCalc()
             }
         }
+        
+        
     
         
     }

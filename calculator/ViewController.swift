@@ -11,7 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     
     private var userIsTyping = false
-    
+    private var haveDot = false
     @IBOutlet private weak var display: UILabel!
     
     @IBAction private func touchDigit(_ sender: UIButton) {
@@ -37,6 +37,22 @@ class ViewController: UIViewController {
     }
     
     private var brain = CalculatorBrain()
+    
+    
+    @IBAction func addDecimal(_ sender: UIButton) {
+        if !haveDot {
+            if userIsTyping {
+                display.text! += "."
+            }
+            else {
+                display.text! = "0."
+            }
+        haveDot = true
+        userIsTyping = true
+        }
+    }
+    
+
     @IBAction private func performOperation(_ sender: UIButton) {
         if userIsTyping {
             brain.setOperand(operand: displayValue)
@@ -46,5 +62,6 @@ class ViewController: UIViewController {
             brain.performOperation(symbol: mathSymb)
         }
         displayValue = brain.result
+        haveDot = false
     }
 }

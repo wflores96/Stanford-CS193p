@@ -16,15 +16,19 @@ class CalculatorBrain {
     }
     
     private var accumulator = 0.0
+    private var internalProgram = [AnyObject]()
+    
     private var pending: PendingBinaryOp?
     
     func setOperand(operand : Double) {
         accumulator = operand
+        internalProgram.append(operand as AnyObject)
     }
     
     private func clearCalc() {
         pending = nil
         accumulator = 0
+        internalProgram.removeAll()
         
     }
     
@@ -58,6 +62,7 @@ class CalculatorBrain {
     }
     
     func performOperation(symbol: String) {
+        internalProgram.append(symbol as AnyObject)
         if let currOp = operations[symbol] {
             switch currOp {
             case .Constant(let associatedVal):
@@ -73,11 +78,31 @@ class CalculatorBrain {
                 clearCalc()
             }
         }
-        
-        
-    
-        
     }
+    
+    typealias PropertyList = AnyObject
+    
+    
+    
+    var program: PropertyList {
+        get {
+            return internalProgram as CalculatorBrain.PropertyList
+        }
+        set {
+            clearCalc()
+            if let arrayOfOps = newValue as? [AnyObject] {
+                for op in arrayOfOps {
+                    if let operand = op as? Double {
+                        setOperand(operand: operand)
+                    }
+                    else if let operation = op as? String {
+                        performOperation(symbol: operation)
+                    }
+                }
+            }
+        }
+    }
+    
     
     var result: Double {
         get {
